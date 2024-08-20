@@ -15,7 +15,9 @@ export default () => ({
         url: config.get<string>('API_URL'),
         origin: config.get<string>('API_URL'),
       },
-
+    iqair:{
+      api_key: config.get<string>('IQAIR_API_KEY'),
+    },
     db: {
       type: config.get<string>('DB_TYPE'),
       username: config.get<string>('DB_USERNAME'),

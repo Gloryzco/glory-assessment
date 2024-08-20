@@ -6,6 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as compression from 'compression';
 import helmet from 'helmet';
 import configuration from './config/configuration';
+import AppValidationError from './shared/utils/AppValidationError';
 
 const config = configuration();
 
@@ -29,7 +30,7 @@ async function bootstrap() {
           const message_key = Object.keys(validationErrors[0].constraints)[0];
           message = validationErrors[0].constraints[message_key];
         }
-        return new Error(message || 'Validation Error Occured');
+        return new AppValidationError(message || 'Validation Error Occured');
       },
     }),
   );
@@ -45,12 +46,7 @@ async function bootstrap() {
     .setTitle('AIR QUALITY')
     .setDescription('REST API for air quality information of nearest city to GPS coordinates')
     .setVersion('1.0')
-    // .addBearerAuth(
-    //   { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-    //   'JWT',
-    // )
     .addTag('AIR QUALITY')
-    // .setExternalDoc('Postman Collection', '/api-json')
     .build();
 
   const document = SwaggerModule.createDocument(app, configuration);

@@ -7,7 +7,7 @@ const config = configuration();
 export class AxiosHelper {
   static async sendGetRequest(
     path: string,
-    headers: Record<string, unknown>,
+    headers?: Record<string, unknown>,
   ): Promise<IAxiosHelperResponse> {
     const response = await axios.get(path, {
       headers: {

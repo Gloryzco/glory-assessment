@@ -1,17 +1,25 @@
 import { Controller, Get, Query } from '@nestjs/common';
-// import { AirQualityService } from './air-quality.service';
 import { GetAirQualityDto } from '../dtos';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
+import { AirQualityService } from '../services';
 
 @ApiTags('Air Quality')
 @Controller('air-quality')
 export class AirQualityController {
-//   constructor(private readonly airQualityService: AirQualityService) {}
+  constructor(private readonly airQualityService: AirQualityService) {}
 
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Not Found'
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Bad Request'
+  })
   @Get()
   async getAirQuality(@Query() query: GetAirQualityDto) {
-    // const data = await this.airQualityService.getAirQuality(query);
-    // await this.airQualityService.saveAirQuality(data, query);
+  await this.airQualityService.getAirQuality(query);
+    // await this.airQualityService.saveAirQuality( query);
     // return { Result: data };
   }
 
