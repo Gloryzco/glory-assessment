@@ -7,6 +7,7 @@ import { AirQuality } from 'src/entity';
 import { AxiosHelper } from 'src/shared';
 import { GetAirQualityDto } from '../dtos';
 import configuration from 'src/config/configuration';
+import { RedisService } from 'src/module/redis';
 
 const config = configuration();
 
@@ -17,14 +18,35 @@ export class AirQualityService {
   constructor(
     @InjectRepository(AirQuality)
     private readonly airQualityRepository: Repository<AirQuality>,
+    private readonly redisService: RedisService,
   ) {}
 
   async getAirQuality(query: GetAirQualityDto) {
     const { longitude, latitude } = query;
-    // const apiResponse = await AxiosHelper.sendGetRequest(
-    //   `https://api-iqair.com/v2/nearest_city?lat=${latitude}&lon=${longitude}&key=${this.IQAIR_API_KEY}`,
-    // );
-    console.log(this.IQAIR_API_KEY);
+    const cacheKey = `lat:${query.latitude} long:${query.longitude}`;
+    let airQualityFromCache = await this.redisService.get(cacheKey);
+    if (airQualityFromCache) {
+      return JSON.parse(airQualityFromCache);
+    }
+    const apiResponse = await AxiosHelper.sendGetRequest(
+      `https://api.airvisual.com/v2/nearest_city?lat=${latitude}&lon=${longitude}&key=${this.IQAIR_API_KEY}`,
+    );
+    const pollutionData = apiResponse.data.data.current.pollution;
+
+    const resultFromApi = {
+      Result: {
+        Pollution: {
+          ts: pollutionData.ts,
+          aqius: pollutionData.aqius,
+          mainus: pollutionData.mainus,
+          aqicn: pollutionData.aqicn,
+          maincn: pollutionData.maincn,
+        },
+      },
+    };
+    await this.redisService.set(cacheKey, JSON.stringify(resultFromApi));
+
+    return resultFromApi;
   }
 
   async saveAirQuality(data: any) {

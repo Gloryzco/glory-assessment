@@ -1,0 +1,56 @@
+services:
+  app:
+    container_name: air_quality
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3009:3009'
+    environment:
+      - PORT=3009
+      - DB_TYPE = postgres
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=""
+      - DB_NAME=air_quality
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/app
+    depends_on:
+      # - database
+      - redis
+    networks:
+      - air_quality_network
+
+  redis:
+    container_name: air_quality_redis
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis:/data
+    networks:
+      - air_quality_network
+
+  # database:
+  #   container_name: country_api_mysql
+  #   image: mysql:8.0
+  #   ports:
+  #     - 3307:3306
+  #   environment:
+  #     MYSQL_ALLOW_EMPTY_PASSWORD: 1
+  #     MYSQL_ROOT_PASSWORD: ''
+  #     MYSQL_DATABASE: country_api
+  #   networks:
+  #     - country_api_network
+
+volumes:
+  redis:
+    driver: local
+  # mysql-data:
+  #   driver: local
+
+networks:
+  air_quality_network:

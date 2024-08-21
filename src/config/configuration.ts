@@ -15,9 +15,11 @@ export default () => ({
         url: config.get<string>('API_URL'),
         origin: config.get<string>('API_URL'),
       },
+
     iqair:{
       api_key: config.get<string>('IQAIR_API_KEY'),
     },
+
     db: {
       type: config.get<string>('DB_TYPE'),
       username: config.get<string>('DB_USERNAME'),
@@ -25,5 +27,10 @@ export default () => ({
       dbname: config.get<string>('DB_NAME'),
       port: config.get<string>('DB_PORT'),
       host: config.get<string>('DB_HOST'),
-    }
+    },
+
+    redis: {
+      host: config.get<any>('REDIS_HOST'),
+      port: config.get<number>('REDIS_PORT'),
+    },
 });

@@ -18,7 +18,7 @@ export const ResponseCodes = {
   // Handler for system failure | Code: '500',
   '0002': {
     type: 'error',
-    status: 'FAILED',
+    status: 'ERROR',
     code: '02',
     message: 'System failure',
   },

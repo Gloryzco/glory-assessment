@@ -1,7 +1,13 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Response } from '@nestjs/common';
 import { GetAirQualityDto } from '../dtos';
-import { ApiBadRequestResponse, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AirQualityService } from '../services';
+import { ResponseFormat } from 'src/shared';
 
 @ApiTags('Air Quality')
 @Controller('air-quality')
@@ -10,17 +16,20 @@ export class AirQualityController {
 
   @ApiNotFoundResponse({
     status: 404,
-    description: 'Not Found'
+    description: 'Not Found',
   })
   @ApiBadRequestResponse({
     status: 400,
-    description: 'Bad Request'
+    description: 'Bad Request',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Ok',
   })
   @Get()
-  async getAirQuality(@Query() query: GetAirQualityDto) {
-  await this.airQualityService.getAirQuality(query);
-    // await this.airQualityService.saveAirQuality( query);
-    // return { Result: data };
+  async getAirQuality(@Response() res, @Query() query: GetAirQualityDto) {
+    const response = await this.airQualityService.getAirQuality(query);
+    ResponseFormat.successResponse(res, response, 'Air quality fetched successfully');
   }
 
   @Get('/most-polluted-time')

@@ -23,31 +23,11 @@ class AppError extends Error {
 
   httpStatus() {
     switch (this.responseBody?.status) {
-      case 'OK':
+      case 'SUCCESS':
         if (this.responseBody.code == '00') {
           return this.httpStatusCode ?? 200;
         }
-
-        if (this.responseBody.code == '01') {
-          return this.httpStatusCode ?? 202;
-        }
-      case 'UNAUTHORIZED':
-        return this.httpStatusCode ?? 401;
-      case 'FAIL':
-        if (this.responseBody.code == '01') {
-          return this.httpStatusCode ?? 404;
-        }
-
-        if (this.responseBody.code == '03') {
-          return this.httpStatusCode ?? 400;
-        }
-
-        if (this.responseBody.code == '05') {
-          return this.httpStatusCode ?? 401;
-        }
-        return this.httpStatusCode ?? 400;
-
-      case 'DENIED':
+      case 'FAILED':
         return this.httpStatusCode ?? 400;
 
       default:
