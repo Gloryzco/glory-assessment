@@ -17,7 +17,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     if (exception instanceof AppError) {
-      console.log('error http status: ' + exception.httpStatus());
       ResponseFormat.handleAppErrorResponse(
         response,
         exception.responseCode,

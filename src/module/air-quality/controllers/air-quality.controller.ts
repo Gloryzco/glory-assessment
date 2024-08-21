@@ -32,9 +32,21 @@ export class AirQualityController {
     ResponseFormat.successResponse(res, response, 'Air quality fetched successfully');
   }
 
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Not Found',
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Bad Request',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Ok',
+  })
   @Get('/most-polluted-time')
-  async getMostPollutedTime() {
-    // const mostPolluted = await this.airQualityService.getMostPollutedTime();
-    // return { mostPolluted };
+  async getMostPollutedTime(@Response() res,) {
+    const mostPollutedDateTime = await this.airQualityService.getMostPollutedTime();
+    ResponseFormat.successResponse(res, mostPollutedDateTime, 'Fetched successfully');
   }
 }

@@ -7,9 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/datasource';
 import { APP_FILTER } from '@nestjs/core';
 import { GlobalExceptionFilter } from './shared';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot(dataSourceOptions),
     AirQualityModule,
     RedisModule,

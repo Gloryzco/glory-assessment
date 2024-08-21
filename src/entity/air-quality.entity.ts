@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 
 @Entity()
-@Index(['latitude', 'longitude'])
+@Index(['latitude', 'longitude', 'ts', 'recordedAt'])
 export class AirQuality {
   @PrimaryGeneratedColumn()
   id: number;
@@ -24,6 +24,9 @@ export class AirQuality {
   @Column({ type: 'double precision' })
   latitude: number;
 
-  @Column({ type: 'double precision'})
+  @Column({ type: 'double precision' })
   longitude: number;
+
+  @Column({ type: 'timestamp' })
+  recordedAt: Date;
 }

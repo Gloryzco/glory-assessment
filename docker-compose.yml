@@ -13,7 +13,7 @@ services:
       - DB_PORT=5432
       - DB_USER=postgres
       - DB_PASS=""
-      - DB_NAME=air_quality
+      - DB_NAME=airquality
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     volumes:
