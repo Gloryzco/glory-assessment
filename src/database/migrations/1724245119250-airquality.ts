@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Airquality1724235958517 implements MigrationInterface {
-    name = 'Airquality1724235958517'
+export class Airquality1724245119250 implements MigrationInterface {
+    name = 'Airquality1724245119250'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
             CREATE TABLE "air_quality" (
                 "id" SERIAL NOT NULL,
                 "ts" TIMESTAMP NOT NULL,
-                "aqius" character varying NOT NULL,
+                "aqius" integer NOT NULL,
                 "mainus" character varying NOT NULL,
-                "aqicn" character varying NOT NULL,
+                "aqicn" integer NOT NULL,
                 "maincn" character varying NOT NULL,
                 "latitude" double precision NOT NULL,
                 "longitude" double precision NOT NULL,

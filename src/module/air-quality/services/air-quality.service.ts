@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { AirQuality } from 'src/entity';
-import { AxiosHelper } from 'src/shared';
+import { IAirQualityApiResponse, AxiosHelper, IAirQualityService, IPollutionData, IResultFromApi, IAirQuality } from 'src/shared';
 import { RedisService } from 'src/module/redis';
 import { LoggerService } from 'src/logger';
 import { GetAirQualityDto } from '../dtos';
@@ -13,7 +13,7 @@ import AppError from 'src/shared/utils/AppError';
 const config = configuration();
 
 @Injectable()
-export class AirQualityService {
+export class AirQualityService implements IAirQualityService {
   private readonly IQAIR_API_KEY = config.iqair.api_key;
 
   constructor(
@@ -23,56 +23,47 @@ export class AirQualityService {
     private readonly loggerService: LoggerService,
   ) {}
 
-  async getAirQuality(query: GetAirQualityDto) {
+  async getAirQuality(query: GetAirQualityDto): Promise<IResultFromApi> {
     const { longitude, latitude } = query;
-    const cacheKey = `lat:${latitude} long:${longitude}`;
-
-    let resultFromCache = await this.redisService.get(cacheKey);
+    const cacheKey: string = `lat:${latitude} long:${longitude}`;
+    
+    const resultFromCache: string = await this.redisService.get(cacheKey);
     if (resultFromCache) {
       return JSON.parse(resultFromCache);
     }
 
-    try {
-      const apiResponse = await AxiosHelper.sendGetRequest(
-        `https://api.airvisual.com/v2/nearest_city?lat=${latitude}&lon=${longitude}&key=${this.IQAIR_API_KEY}`,
-      );
-      const pollutionData = apiResponse.data.data.current.pollution;
+    const resultFromApi = await this.fetchAirQualityFromApi(latitude, longitude);
+    await this.redisService.set(cacheKey, JSON.stringify(resultFromApi));
 
-      const resultFromApi = {
-        Result: {
-          Pollution: {
-            ts: pollutionData.ts,
-            aqius: pollutionData.aqius,
-            mainus: pollutionData.mainus,
-            aqicn: pollutionData.aqicn,
-            maincn: pollutionData.maincn,
-          },
-        },
-      };
-
-      await this.redisService.set(cacheKey, JSON.stringify(resultFromApi));
-
-      return resultFromApi;
-    } catch (error) {
-      this.loggerService.error('Error fetching air quality data', error);
-      throw new AppError('0002', error.message);
-    }
+    return resultFromApi;
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
   async checkParisAirQuality() {
     const parisLatitude = 48.856613;
     const parisLongitude = 2.352222;
-    const cacheKey = `lat:${parisLatitude} long:${parisLongitude}`;
     this.loggerService.log('Cron job started for Paris air quality check');
+    
     try {
-      const apiResponse = await AxiosHelper.sendGetRequest(
-        `https://api.airvisual.com/v2/nearest_city?lat=${parisLatitude}&lon=${parisLongitude}&key=${this.IQAIR_API_KEY}`,
+      const resultFromApi = await this.fetchAirQualityFromApi(parisLatitude, parisLongitude);
+      await this.saveAirQuality(resultFromApi.Result.Pollution, {
+        latitude: parisLatitude,
+        longitude: parisLongitude,
+      });
+    } catch (error) {
+      this.loggerService.error('Failed to fetch and save Paris air quality data', error);
+    }
+  }
+
+  private async fetchAirQualityFromApi(latitude: number, longitude: number): Promise<IResultFromApi> {
+    try {
+      const apiResponse: IAirQualityApiResponse = await AxiosHelper.sendGetRequest(
+        `https://api.airvisual.com/v2/nearest_city?lat=${latitude}&lon=${longitude}&key=${this.IQAIR_API_KEY}`,
       );
 
-      const pollutionData = apiResponse.data.data.current.pollution;
+      const pollutionData: IPollutionData = apiResponse.data?.data?.current?.pollution;
 
-      const resultFromApi = {
+      return {
         Result: {
           Pollution: {
             ts: pollutionData.ts,
@@ -83,26 +74,17 @@ export class AirQualityService {
           },
         },
       };
-
-      await this.saveAirQuality(resultFromApi.Result.Pollution, {
-        latitude: parisLatitude,
-        longitude: parisLongitude,
-      });
-
-      return resultFromApi;
     } catch (error) {
-      this.loggerService.error(
-        'Failed to fetch and save Paris air quality data',
-        error,
-      );
+      this.loggerService.error('Error fetching air quality data from API', error);
+      throw new AppError('0002', "Error fetching air quality data from API");
     }
   }
 
-  async saveAirQuality(
-    pollutionData: any,
+  private async saveAirQuality(
+    pollutionData: IPollutionData,
     query: { latitude: number; longitude: number },
   ) {
-    const airQuality = new AirQuality();
+    const airQuality: IAirQuality = new AirQuality();
     airQuality.ts = new Date(pollutionData.ts);
     airQuality.aqius = pollutionData.aqius;
     airQuality.mainus = pollutionData.mainus;
@@ -119,6 +101,7 @@ export class AirQualityService {
       }
     } catch (error) {
       this.loggerService.error('Error saving data to the database', error);
+      throw new AppError('0002', "Error saving data to the database");
     }
   }
 
@@ -132,5 +115,4 @@ export class AirQualityService {
       .limit(1)
       .getRawOne();
   }
-  
 }

@@ -1,5 +1,5 @@
 {
-  "name": "g-rider-app",
+  "name": "air_quality",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -19,7 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "typeorm migration:generate -d ./dist/database/datasource.js",
-    "migration:run": "typeorm migration:run  -d ./dist/database/datasource.js",
+    "migration:run": "nest build && typeorm migration:run  -d ./dist/database/datasource.js",
     "migration:revert": "typeorm migration:revert -d ./dist/database/datasource.js",
     "migration:show": "typeorm migration:show -d ./dist/database/datasource.js",
     "typeorm": "typeorm-ts-node-commonjs"
@@ -70,22 +70,5 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }

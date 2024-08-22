@@ -44,4 +44,4 @@ const prodLogger = {
 };
 
 // export log instance based on the current environment
-export const winstonConfig = config.app.debug ? devLogger : prodLogger;
+export const winstonConfig = config.app.debug == 'true' ? devLogger : prodLogger;

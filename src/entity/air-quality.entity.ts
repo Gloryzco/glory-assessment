@@ -1,22 +1,23 @@
+import { IAirQuality } from 'src/shared';
 import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 
 @Entity()
 @Index(['latitude', 'longitude', 'ts', 'recordedAt'])
-export class AirQuality {
+export class AirQuality implements IAirQuality {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'timestamp' })
   ts: Date;
 
-  @Column({ type: 'varchar' })
-  aqius: string;
+  @Column({ type: 'int' })
+  aqius: number;
 
   @Column({ type: 'varchar' })
   mainus: string;
 
-  @Column({ type: 'varchar' })
-  aqicn: string;
+  @Column({ type: 'int' })
+  aqicn: number;
 
   @Column({ type: 'varchar' })
   maincn: string;
