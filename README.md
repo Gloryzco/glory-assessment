@@ -13,7 +13,7 @@ The Air Quality API is a RESTful API built using Node.js and the NestJS framewor
 
 The API was designed with the following key features:
 
-- **Efficient Data Caching**: To reduce the number of requests made to the IQAir API, Redis is used to cache air quality data for each zone for one hour. Since the air quality stations are updated only once per hour, this caching mechanism ensures that we are not overloading the external service with unnecessary requests.
+- **Efficient Data Caching**: To reduce the number of requests made to the IQAir API, Redis is used to cache air quality data for each zone for ten minutes. This caching mechanism ensures that we are not overloading the external service with unnecessary requests.
 - **Rate Limiting**: A rate limiter has been implemented to allow a maximum of 100 requests per second. This helps in preventing Brute-force attacks and abuse by clients making excessive requests.
 - **Data Storage**: PostgreSQL is used as the database to store the air quality data, including the date and time when the data was fetched. This allows for efficient querying and analysis of historical air quality data. Additionally, indexing was implemented to optimize performance.
 - **Scheduled Updates**: A CRON job is scheduled to run every minute, specifically for the Paris zone. This job checks the air quality data and saves it in the database with the date and time of the update.

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RedisClientProvider } from '../repository';
 import { LoggerService } from 'src/logger';
 
-const oneHourInSeconds = 60 * 60;
+const oneHourInSeconds = 60 * 10;
 
 @Injectable()
 export class RedisService {
