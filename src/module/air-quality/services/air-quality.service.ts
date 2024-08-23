@@ -52,6 +52,7 @@ export class AirQualityService implements IAirQualityService {
       });
     } catch (error) {
       this.loggerService.error('Failed to fetch and save Paris air quality data', error);
+      throw new AppError('0002', 'Failed to fetch and save Paris air quality data');
     }
   }
 

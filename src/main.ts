@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as compression from 'compression';
+import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import configuration from './config/configuration';
 import AppValidationError from './shared/utils/AppValidationError';
@@ -44,16 +45,23 @@ async function bootstrap() {
 
   const configuration = new DocumentBuilder()
     .setTitle('AIR QUALITY')
-    .setDescription('REST API for air quality information of nearest city to GPS coordinates')
+    .setDescription(
+      'REST API for air quality information of nearest city to GPS coordinates',
+    )
     .setVersion('1.0')
     .addTag('AIR QUALITY')
     .build();
 
   const document = SwaggerModule.createDocument(app, configuration);
   SwaggerModule.setup('/swagger', app, document);
+  const limiter = rateLimit({
+    windowMs: 1000,
+    max: 100,
+  });
 
   app.use(compression());
   app.use(helmet());
+  app.use(limiter);
 
   await app.listen(config.app.port, () => {
     console.warn(`server listening on port ${config.app.port}`);

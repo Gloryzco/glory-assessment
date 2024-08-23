@@ -18,10 +18,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:generate": "typeorm migration:generate -d ./dist/database/datasource.js",
-    "migration:run": "nest build && typeorm migration:run  -d ./dist/database/datasource.js",
-    "migration:revert": "typeorm migration:revert -d ./dist/database/datasource.js",
-    "migration:show": "typeorm migration:show -d ./dist/database/datasource.js",
+    "migration:generate": "typeorm migration:generate -d ./dist/src/database/datasource.js",
+    "migration:run": "nest build && typeorm migration:run  -d ./dist/src/database/datasource.js",
+    "migration:revert": "typeorm migration:revert -d ./dist/src/database/datasource.js",
+    "migration:show": "typeorm migration:show -d ./dist/src/database/datasource.js",
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
@@ -58,6 +58,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.42.0",
+    "express-rate-limit": "^7.4.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "jest": "^29.5.0",

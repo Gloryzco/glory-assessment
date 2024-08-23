@@ -2,15 +2,19 @@ FROM node:18
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Install necessary tools including the PostgreSQL client
+RUN apt-get update && apt-get install -y netcat-openbsd postgresql-client
+
 COPY package*.json ./
 
 COPY . .
 
 RUN npm install && npm run build
 
-# RUN rm -rf ./src
+COPY entrypoint.sh /app/
 
-EXPOSE 3009
+EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+ENTRYPOINT ["./entrypoint.sh"]
+
+CMD ["node", "dist/src/main.js"]
