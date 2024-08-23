@@ -2,8 +2,8 @@
 
 ## Documentation
 
-- ### Swagger: http://localhost:3000/swagger
-- ### Postman: https://documenter.getpostman.com/view/3821701/2sAXjDfbiu
+- **Swagger**: http://localhost:3000/swagger
+- **Postman**: https://documenter.getpostman.com/view/3821701/2sAXjDfbiu
 
 ## Project Overview
 
